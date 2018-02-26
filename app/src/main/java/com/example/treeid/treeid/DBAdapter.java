@@ -23,7 +23,8 @@ public class DBAdapter {
     static final String KEY_LIST    = "list";
     static final String KEY_VISINA  = "visina";
     static final String KEY_PLOD    = "plod";
-    static final String KEY_KORA    = "kora";
+    static final String KEY_KORA_BOJA    = "kora_boja";
+    static final String KEY_KORA_TEKSTURA    = "kora_tekstura";
     static final String KEY_KROSNJA = "krosnja";
     static final String KEY_LINK    = "link";
     static final String TAG = "DBAdapter";
@@ -37,8 +38,8 @@ public class DBAdapter {
                     + "ime text not null, lat_ime text not null,"
                     + "porodica text not null, list text not null,"
                     + "visina text not null, plod text not null,"
-                    + "kora text not null, krosnja text not null,"
-                    + "link text not null);";
+                    + "kora_boja text not null, kora_tekstura text not null,"
+                    + " krosnja text not null, link text not null);";
 
     final Context context;
 
@@ -92,7 +93,8 @@ public class DBAdapter {
     }
 
     //---ubacuje stablo u bazu---
-    public long insertStablo(String ime, String lat_ime, String porodica, String list, String visina, String plod, String kora, String krosnja, String link)
+    public long insertStablo(String ime, String lat_ime, String porodica, String list, String visina, String plod,
+                             String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_IME, ime);
@@ -101,7 +103,8 @@ public class DBAdapter {
         initialValues.put(KEY_LIST, list);
         initialValues.put(KEY_VISINA, visina);
         initialValues.put(KEY_PLOD, plod);
-        initialValues.put(KEY_KORA, kora);
+        initialValues.put(KEY_KORA_BOJA, kora_boja);
+        initialValues.put(KEY_KORA_TEKSTURA, kora_tekstura);
         initialValues.put(KEY_KROSNJA, krosnja);
         initialValues.put(KEY_LINK, link);
 
@@ -118,7 +121,7 @@ public class DBAdapter {
     public ArrayList<Stablo> getAllStabla()
     {
         ArrayList<Stablo> svaStabla = new ArrayList<Stablo>();
-        Cursor mCursor = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK }, null, null, null, null, null);
+        Cursor mCursor = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK }, null, null, null, null, null);
 
         if(mCursor.moveToFirst())
         {
@@ -126,7 +129,8 @@ public class DBAdapter {
             {
                 svaStabla.add(new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                                          mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                                         mCursor.getString(7), mCursor.getString(8), mCursor.getString(9) ));
+                                         mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
+                                         mCursor.getString((10))));
             } while(mCursor.moveToNext());
         }
 
@@ -137,18 +141,20 @@ public class DBAdapter {
     public Stablo getStablo(long rowId) throws SQLException
     {
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK  }, KEY_ROWID + "=" + rowId, null,
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  }, KEY_ROWID + "=" + rowId, null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
         return new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                           mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                          mCursor.getString(7), mCursor.getString(8), mCursor.getString(9) );
+                          mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
+                          mCursor.getString((10)));
     }
 
     //---update-a odredjeno stablo---
-    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String list, String visina, String plod, String kora, String krosnja, String link)
+    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String list, String visina, String plod,
+                                    String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues args = new ContentValues();
         args.put(KEY_IME, ime);
@@ -157,7 +163,8 @@ public class DBAdapter {
         args.put(KEY_LIST, list);
         args.put(KEY_VISINA, visina);
         args.put(KEY_PLOD, plod);
-        args.put(KEY_KORA, kora);
+        args.put(KEY_KORA_BOJA, kora_boja);
+        args.put(KEY_KORA_TEKSTURA, kora_tekstura);
         args.put(KEY_KROSNJA, krosnja);
         args.put(KEY_LINK, link);
         return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
