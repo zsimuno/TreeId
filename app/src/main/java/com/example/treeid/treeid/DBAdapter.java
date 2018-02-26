@@ -15,11 +15,13 @@ import android.util.Log;
 public class DBAdapter {
     static final String KEY_ROWID   = "_id";
     static final String KEY_IME     = "ime";
+    static final String KEY_LAT_IME = "lat_ime";
     static final String KEY_LIST    = "list";
     static final String KEY_VISINA  = "visina";
     static final String KEY_PLOD    = "plod";
     static final String KEY_KORA    = "kora";
     static final String KEY_KROSNJA = "krosnja";
+    static final String KEY_LINK    = "link";
     static final String TAG = "DBAdapter";
 
     static final String DATABASE_NAME = "MyDB";
@@ -28,9 +30,11 @@ public class DBAdapter {
 
     static final String DATABASE_CREATE =
             "create table stabla (_id integer primary key autoincrement, "
-                    + "ime text not null, list text not null,"
+                    + "ime text not null, lat_ime text not null,"
+                    + " list text not null,"
                     + "visina text not null, plod text not null,"
-                    + "kora text not null, krosnja text not null);";
+                    + "kora text not null, krosnja text not null"
+                    + "link text not null);";
 
     final Context context;
 
@@ -84,7 +88,7 @@ public class DBAdapter {
     }
 
     //---insert a tree into the database---
-    public long insertTree(String ime, String list, String visina, String plod, String kora, String krosnja)
+    public long insertTree(String ime, String list, String visina, String plod, String kora, String krosnja, String link, String lat_ime)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_IME, ime);
@@ -93,6 +97,8 @@ public class DBAdapter {
         initialValues.put(KEY_PLOD, plod);
         initialValues.put(KEY_KORA, kora);
         initialValues.put(KEY_KROSNJA, krosnja);
+        initialValues.put(KEY_LINK, link);
+        initialValues.put(KEY_LAT_IME, lat_ime);
         return db.insert(DATABASE_TABLE, null, initialValues);
     }
 
@@ -105,14 +111,14 @@ public class DBAdapter {
     //---retrieves all the trees---
     public Cursor getAllTrees() // Vratit će listu objekata klase "Stablo"
     {
-        return db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA }, null, null, null, null, null);
+        return db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK,KEY_LAT_IME }, null, null, null, null, null);
     }
 
     //---retrieves a particular tree---
     public Cursor getTree(long rowId) throws SQLException // Vratit će objekt klase "Stablo"
     {
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA }, KEY_ROWID + "=" + rowId, null,
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK,KEY_LAT_IME  }, KEY_ROWID + "=" + rowId, null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -121,7 +127,7 @@ public class DBAdapter {
     }
 
     //---updates a tree---
-    public boolean updateTree(long rowId, String ime, String list, String visina, String plod, String kora, String krosnja)
+    public boolean updateTree(long rowId, String ime, String list, String visina, String plod, String kora, String krosnja, String link, String lat_ime)
     {
         ContentValues args = new ContentValues();
         args.put(KEY_IME, ime);
@@ -130,6 +136,8 @@ public class DBAdapter {
         args.put(KEY_PLOD, plod);
         args.put(KEY_KORA, kora);
         args.put(KEY_KROSNJA, krosnja);
+        args.put(KEY_LINK, link);
+        args.put(KEY_LAT_IME, lat_ime);
         return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
