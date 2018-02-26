@@ -7,6 +7,7 @@ package com.example.treeid.treeid;
 public class Stablo {
     String ime;
     String lat_ime;
+    String porodica;
     String list;
     String visina;
     String plod;
@@ -15,9 +16,10 @@ public class Stablo {
     String link;
 
 
-    public Stablo(String _ime, String _lat_ime, String _list, String _visina, String _plod, String _kora, String _krosnja, String _link){
+    public Stablo(String _ime, String _lat_ime, String _porodica, String _list, String _visina, String _plod, String _kora, String _krosnja, String _link){
         ime     = _ime;
         lat_ime = _lat_ime;
+        porodica= _porodica;
         list    = _list;
         visina  = _visina;
         plod    = _plod;
@@ -29,6 +31,14 @@ public class Stablo {
 
     public String getIme() {
         return ime;
+    }
+
+    public String getLat_ime(){
+        return lat_ime;
+    }
+
+    public String getPorodica() {
+        return porodica;
     }
 
     public String getList() {
@@ -55,7 +65,5 @@ public class Stablo {
         return link;
     }
 
-    public String getLat_ime(){
-        return lat_ime;
-    }
+
 }

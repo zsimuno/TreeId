@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Nikola on 26.2.2018..
  */
@@ -16,6 +19,7 @@ public class DBAdapter {
     static final String KEY_ROWID   = "_id";
     static final String KEY_IME     = "ime";
     static final String KEY_LAT_IME = "lat_ime";
+    static final String KEY_PORODICA= "porodica";
     static final String KEY_LIST    = "list";
     static final String KEY_VISINA  = "visina";
     static final String KEY_PLOD    = "plod";
@@ -31,9 +35,9 @@ public class DBAdapter {
     static final String DATABASE_CREATE =
             "create table stabla (_id integer primary key autoincrement, "
                     + "ime text not null, lat_ime text not null,"
-                    + " list text not null,"
+                    + "porodica text not null, list text not null,"
                     + "visina text not null, plod text not null,"
-                    + "kora text not null, krosnja text not null"
+                    + "kora text not null, krosnja text not null,"
                     + "link text not null);";
 
     final Context context;
@@ -74,71 +78,114 @@ public class DBAdapter {
         }
     }
 
-    //---opens the database---
+    //---otvara bazu---
     public DBAdapter open() throws SQLException
     {
         db = DBHelper.getWritableDatabase();
         return this;
     }
 
-    //---closes the database---
+    //---zatvara bazu---
     public void close()
     {
         DBHelper.close();
     }
 
-    //---insert a tree into the database---
-    public long insertTree(String ime, String list, String visina, String plod, String kora, String krosnja, String link, String lat_ime)
+    //---ubacuje stablo u bazu---
+    public long insertStablo(String ime, String lat_ime, String porodica, String list, String visina, String plod, String kora, String krosnja, String link)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_IME, ime);
+        initialValues.put(KEY_LAT_IME, lat_ime);
+        initialValues.put(KEY_PORODICA, porodica);
         initialValues.put(KEY_LIST, list);
         initialValues.put(KEY_VISINA, visina);
         initialValues.put(KEY_PLOD, plod);
         initialValues.put(KEY_KORA, kora);
         initialValues.put(KEY_KROSNJA, krosnja);
         initialValues.put(KEY_LINK, link);
-        initialValues.put(KEY_LAT_IME, lat_ime);
+
         return db.insert(DATABASE_TABLE, null, initialValues);
     }
 
-    //---deletes a particular tree---
-    public boolean deleteTree(long rowId)
+    //---briše specificno stablo---
+    public boolean deleteStablo(long rowId)
     {
         return db.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    //---retrieves all the trees---
-    public Cursor getAllTrees() // Vratit će listu objekata klase "Stablo"
+    //---vraca ArrayList koji sadrzi sva stabla---
+    public ArrayList<Stablo> getAllStabla()
     {
-        return db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK,KEY_LAT_IME }, null, null, null, null, null);
+        ArrayList<Stablo> svaStabla = new ArrayList<Stablo>();
+        Cursor mCursor = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK }, null, null, null, null, null);
+
+        if(mCursor.moveToFirst())
+        {
+            do
+            {
+                svaStabla.add(new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
+                                         mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
+                                         mCursor.getString(7), mCursor.getString(8), mCursor.getString(9) ));
+            } while(mCursor.moveToNext());
+        }
+
+        return svaStabla;
     }
 
-    //---retrieves a particular tree---
-    public Cursor getTree(long rowId) throws SQLException // Vratit će objekt klase "Stablo"
+    //---vraca specificno stablo---
+    public Stablo getStablo(long rowId) throws SQLException
     {
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK,KEY_LAT_IME  }, KEY_ROWID + "=" + rowId, null,
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA,KEY_LINK  }, KEY_ROWID + "=" + rowId, null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
-        return mCursor;
+        return new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
+                          mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
+                          mCursor.getString(7), mCursor.getString(8), mCursor.getString(9) );
     }
 
-    //---updates a tree---
-    public boolean updateTree(long rowId, String ime, String list, String visina, String plod, String kora, String krosnja, String link, String lat_ime)
+    //---update-a odredjeno stablo---
+    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String list, String visina, String plod, String kora, String krosnja, String link)
     {
         ContentValues args = new ContentValues();
         args.put(KEY_IME, ime);
+        args.put(KEY_LAT_IME, lat_ime);
+        args.put(KEY_PORODICA, porodica);
         args.put(KEY_LIST, list);
         args.put(KEY_VISINA, visina);
         args.put(KEY_PLOD, plod);
         args.put(KEY_KORA, kora);
         args.put(KEY_KROSNJA, krosnja);
         args.put(KEY_LINK, link);
-        args.put(KEY_LAT_IME, lat_ime);
         return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
 }
+
+
+//        long insert(String table, String nullColumnHack, ContentValues values)
+//        Metoda za ubacivanje retka u bazu.
+//        Vraca ID retka koji je ubacen, ili -1 u slucaju greske.
+//
+//        int delete(String table, String whereClause, String[] whereArgs)
+//        Metoda za brisanje redaka iz baze.
+//        Vraca broj pobrisanih redaka ako je bilo whereClause-a,  inace vraca 0. Da se izbrisu svi retci stavimo "1" na mjesto whereClause.
+//
+//        int update(String table, ContentValues values, String whereClause, String[] whereArgs)
+//        Metoda za izmjenu redaka u bazi.
+//        Vraca broj redaka koji su izmjenjeni.
+//
+//        Cursor 	query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit)
+//        Za upit na danoj tablici, vraca Cursor na rezultat.
+//
+//        Cursor 	query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
+//        Za upit na danoj tablici, vraca Cursor na rezultat.
+//
+//        Cursor 	query(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit)
+//        Za upit na danoj tablici, vraca Cursor na rezultat.
+//
+
+
