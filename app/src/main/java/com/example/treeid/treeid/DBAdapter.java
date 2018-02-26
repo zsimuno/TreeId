@@ -102,14 +102,14 @@ public class DBAdapter {
         return db.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    //---retrieves all the contacts---
-    public Cursor getAllTrees()
+    //---retrieves all the trees---
+    public Cursor getAllTrees() // Vratit će listu objekata klase "Stablo"
     {
         return db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA }, null, null, null, null, null);
     }
 
-    //---retrieves a particular contact---
-    public Cursor getTree(long rowId) throws SQLException
+    //---retrieves a particular tree---
+    public Cursor getTree(long rowId) throws SQLException // Vratit će objekt klase "Stablo"
     {
         Cursor mCursor =
                 db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA,KEY_KROSNJA }, KEY_ROWID + "=" + rowId, null,
@@ -120,7 +120,7 @@ public class DBAdapter {
         return mCursor;
     }
 
-    //---updates a contact---
+    //---updates a tree---
     public boolean updateTree(long rowId, String ime, String list, String visina, String plod, String kora, String krosnja)
     {
         ContentValues args = new ContentValues();
