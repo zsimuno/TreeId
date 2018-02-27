@@ -137,7 +137,7 @@ public class DBAdapter {
         return svaStabla;
     }
 
-    //---vraca specificno stablo---
+    //---vraca specificno stablo preko retka u kojem se nalazi---
     public Stablo getStablo(long rowId) throws SQLException
     {
         Cursor mCursor =
@@ -150,6 +150,44 @@ public class DBAdapter {
                           mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
                           mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
                           mCursor.getString((10)));
+    }
+
+    //---vraca specificno stablo preko imena---
+    public Stablo getStablo(String ime_stabla) throws SQLException
+    {
+        Cursor mCursor =
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
+                        KEY_IME + "=" + ime_stabla, null,
+                        null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
+                mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
+                mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
+                mCursor.getString((10)));
+    }
+
+    //---vraca stabla u istoj porodici---
+    public ArrayList<Stablo> getStablaFromPorodica(String porodica) throws SQLException
+    {
+        ArrayList<Stablo> StablaIzPorodice = new ArrayList<Stablo>();
+        Cursor mCursor =
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
+                        KEY_PORODICA + "=" + porodica, null,
+                        null, null, null, null);
+        if(mCursor.moveToFirst())
+        {
+            do
+            {
+                StablaIzPorodice.add(new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
+                        mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
+                        mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
+                        mCursor.getString((10))));
+            } while(mCursor.moveToNext());
+        }
+
+        return StablaIzPorodice;
     }
 
     //---update-a odredjeno stablo---
