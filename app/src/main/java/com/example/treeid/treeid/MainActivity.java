@@ -14,5 +14,5 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(this, Anketa.class);
         i.putExtra("Porodica", "Bukva");
         startActivity(i);
-    }
+}
 }
