@@ -74,6 +74,7 @@ public class Anketa extends AppCompatActivity {
         {
             gumb[i] = new RadioButton(this);
             gumb[i].setId(i);
+            rg.addView(slika[i]);
             rg.addView(gumb[i]);
             slika[i] = new ImageView(this);
             slika[i].setTooltipText(Integer.toString(i));
@@ -90,7 +91,7 @@ public class Anketa extends AppCompatActivity {
                     imageView.setVisibility(View.VISIBLE);
                 }
             });
-            layout1.addView(slika[i]);
+
         }
         rg.check(0);
         napraviPitanje();
