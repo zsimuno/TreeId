@@ -33,22 +33,20 @@ public class Anketa extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //ubaciti ovisnost o tome kako je ekran okrenut
         setContentView(R.layout.activity_anketa);
 
         Intent intent = getIntent();
 
-        String porodica = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String porodica = intent.getStringExtra("porodica");
 
-        DBAdapter db = new DBAdapter(this);
-        db.open();
 
-        Stablo maklen = new Stablo("Maklen","AcerMons","Sap","maklen_list","5 do 15 m","maklen_plod","takva","nekakva","maklen_krosnja","blalalal");
-        Stablo klen = new Stablo("Klen","AcerNesto","Sap","klen_list","15 do 25 m","klen_plod","takva1","nekakva2","klen_krosnja","huhuhuhu");
-        stabla.add(klen);
-        stabla.add(maklen);
-        //stablo = db.getStablaFromPorodica(porodica);
+        DBAdapter database = new DBAdapter(this);
+        database.open();
+        //this.deleteDatabase("database");
+        stabla = database.getStablaFromPorodica(porodica);
         brojOpcija = stabla.size();
+
+        database.close();
         strukturirajView();
     }
 
