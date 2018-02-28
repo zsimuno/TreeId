@@ -8,13 +8,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Rezultat extends AppCompatActivity {
+public class Rezultat extends BaseActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rezultat);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher_round);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
 
         Intent intent = getIntent();
         String Ime = intent.getStringExtra("Ime");

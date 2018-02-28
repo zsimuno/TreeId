@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class Anketa extends AppCompatActivity {
+public class Anketa extends BaseActivity {
 
     String rez_visina, rez_plod, rez_krošnja, rez_kora_boja, rez_kora_tekstura;
     boolean oznacen = false;
@@ -34,6 +34,11 @@ public class Anketa extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anketa);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher_round);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
 
         Intent intent = getIntent();
 
