@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TreeId</string>
+    <string name="pocetna">Odaberite list kojem najviše sliči list vašeg stabla. Nakon što odaberete pritisnite "Dalje".(Kliknite na sliku za uvećanu verziju)</string>
+    <string name="button">Dalje</string>
 </resources>
