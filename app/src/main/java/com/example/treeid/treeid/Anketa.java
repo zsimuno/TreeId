@@ -72,11 +72,12 @@ public class Anketa extends AppCompatActivity {
 
         for(int i = 0; i < brojOpcija; ++i)
         {
+            slika[i] = new ImageView(this);
             gumb[i] = new RadioButton(this);
             gumb[i].setId(i);
             rg.addView(slika[i]);
             rg.addView(gumb[i]);
-            slika[i] = new ImageView(this);
+
             slika[i].setTooltipText(Integer.toString(i));
             slika[i].setAdjustViewBounds(true);
             slika[i].setMaxWidth(300);
