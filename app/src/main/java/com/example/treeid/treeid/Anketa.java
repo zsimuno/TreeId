@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,8 +27,8 @@ public class Anketa extends AppCompatActivity {
     RadioButton[] gumb;
     Button btn;
     int indeks;
-    int brojOpcija;
-    int brojPitanja = 0;
+    int brojStabala, brojOpcija;
+    int brojPitanja = 0; //redni broj pitanja
 
 
     @Override
@@ -44,18 +45,14 @@ public class Anketa extends AppCompatActivity {
         database.open();
         //this.deleteDatabase("database");
         stabla = database.getStablaFromPorodica(porodica);
-        brojOpcija = stabla.size();
+        brojStabala = stabla.size();
 
         database.close();
-        strukturirajView();
-    }
-
-    private void strukturirajView() {
-        LinearLayout layout1 = findViewById(R.id.tekst_vert);
+        LinearLayout layout1 = findViewById(R.id.lin_anketa);
 
 
-        ActionBar.LayoutParams lparams = new ActionBar.LayoutParams(
-                ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        ActionBar.LayoutParams lparams = new ActionBar.LayoutParams( //tako da širinom zauzima cijeli ekran
+                ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
 
         pitanje = new TextView(this);
         pitanje.setLayoutParams(lparams);
@@ -65,36 +62,6 @@ public class Anketa extends AppCompatActivity {
         rg = new RadioGroup(this);
 
         layout1.addView(rg);
-        //niz potrebnih slika
-        slika = new ImageView[brojOpcija];
-        //niz potrebnih gumbova
-        gumb = new RadioButton[brojOpcija];
-
-        for(int i = 0; i < brojOpcija; ++i)
-        {
-            slika[i] = new ImageView(this);
-            gumb[i] = new RadioButton(this);
-            gumb[i].setId(i);
-            rg.addView(slika[i]);
-            rg.addView(gumb[i]);
-
-            slika[i].setTooltipText(Integer.toString(i));
-            slika[i].setAdjustViewBounds(true);
-            slika[i].setMaxWidth(300);
-            slika[i].setMaxHeight(300);
-            indeks = i;
-            slika[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ImageView imageView = (ImageView) findViewById(R.id.zoom);
-                    int id = getResources().getIdentifier(stabla.get(indeks).getKrosnja(), "drawable", getPackageName());
-                    imageView.setImageResource(id);
-                    imageView.setVisibility(View.VISIBLE);
-                }
-            });
-
-        }
-        rg.check(0);
         napraviPitanje();
         btn = new Button(this);
         btn.setText("Dalje");
@@ -105,12 +72,12 @@ public class Anketa extends AppCompatActivity {
     private View.OnClickListener idiDalje = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            rg.check(0);
             for(int i = 0; i < brojOpcija; ++i)
             {
                 if(gumb[i].isChecked() && brojPitanja == 4){
-                    //resetiram broj pitanja
-                    brojPitanja = 0;
+                    napraviRez(brojPitanja);
+                    String test = rez_visina + " " + rez_plod + " " + rez_krošnja + " " + rez_kora_boja + " " + rez_kora_tekstura;
+                    Toast.makeText(Anketa.this, test ,Toast.LENGTH_LONG).show();
 
                 }
                 else if(gumb[i].isChecked()) {
@@ -125,49 +92,105 @@ public class Anketa extends AppCompatActivity {
 
                 }
             }
-            rg.check(0);
         }
     };
     private void napraviPitanje() {
+        ArrayList<String> lista = new ArrayList<String>();
 
         switch(brojPitanja){
             case 0:
+
                 pitanje.setText("Izaberite približnu visinu stabla:");
-                for(int i = 0; i < brojOpcija; ++i) {
-                    gumb[i].setText(stabla.get(i).getVisina());
-                }
+                for(int i = 0; i < brojStabala; ++i)
+                    if(!lista.contains(stabla.get(i).getVisina()))
+                        lista.add(stabla.get(i).getVisina());
+
+                brojOpcija = lista.size();
+                dodajGumbove(brojOpcija);
+
+                for(int i = 0; i < brojOpcija; ++i)
+                    gumb[i].setText(lista.get(i));
+
 
                 break;
             case 1:
+                brojOpcija = brojStabala;
+                dodajGumboveSlike(brojOpcija);
                 pitanje.setText("Izaberite sliku ploda:");
                 for(int i = 0; i < brojOpcija; ++i){
-                    int id = getResources().getIdentifier(stabla.get(i).getPlod(),"drawable",getPackageName());
+                    int id = getResources().getIdentifier(stabla.get(i).getPlod().split("\\.")[0],"drawable",getPackageName());//ovo radi normalno
                     slika[i].setImageResource(id);
+
                     gumb[i].setText("Slika " + String.valueOf(i + 1));
                 }
 
                 break;
             case 2:
+                lista.clear();
                 pitanje.setText("Kakvu boju kora ima ?");
-                for(int i = 0; i < brojOpcija; ++i){
-                    gumb[i].setText(stabla.get(i).getKora_boja());
-                    slika[i].setImageDrawable(null);
+                //ako je sadržana boja mladog stabla i starog, tada su one odvojene zarezom
+                for(int i = 0; i < brojStabala; ++i){
+                    if(stabla.get(i).getKora_boja().contains(","))
+                    {
+                        //ako već ne sadrži tu boju ubacujemo u listu
+                        if(!lista.contains(stabla.get(i).getKora_boja().split(",")[0]))
+                            lista.add(stabla.get(i).getKora_boja().split(",")[0]);
+                        if(!lista.contains(stabla.get(i).getKora_boja().split(",")[1]))
+                            lista.add(stabla.get(i).getKora_boja().split(",")[1]);
+                    }
+                    else
+                    {
+                        if(!lista.contains(stabla.get(i).getKora_boja()))
+                            lista.add(stabla.get(i).getKora_boja());
+                    }
 
                 }
+                brojOpcija = lista.size();
+                dodajGumbove(brojOpcija);
 
+                for(int i = 0; i < brojOpcija; ++i)
+                {
+                    gumb[i].setText(lista.get(i));
+                }
                 break;
             case 3:
+                lista.clear();
                 pitanje.setText("Kakvu teksturu kora ima ?");
-                for(int i = 0; i < brojOpcija; ++i){
-                    gumb[i].setText(stabla.get(i).getKora_tekstura());
+
+                for(int i = 0; i < brojStabala; ++i){
+                    if(stabla.get(i).getKora_tekstura().contains(","))
+                    {
+                        //ako već ne sadrži tu boju ubacujemo u listu
+                        if(!lista.contains(stabla.get(i).getKora_tekstura().split(",")[0]))
+                            lista.add(stabla.get(i).getKora_tekstura().split(",")[0]);
+                        if(!lista.contains(stabla.get(i).getKora_tekstura().split(",")[1]))
+                            lista.add(stabla.get(i).getKora_tekstura().split(",")[1]);
+                    }
+                    else
+                    {
+                        if(!lista.contains(stabla.get(i).getKora_tekstura()))
+                            lista.add(stabla.get(i).getKora_tekstura());
+                    }
+
+
+                }
+                brojOpcija = lista.size();
+                dodajGumbove(brojOpcija);
+
+                for(int i = 0; i < brojOpcija; ++i)
+                {
+                    gumb[i].setText(lista.get(i));
                 }
 
                 break;
 
             case 4:
+                brojOpcija = brojStabala;
+                dodajGumboveSlike(brojStabala);
                 pitanje.setText("Izaberite sliku krošnje: ");
                 for(int i = 0; i < brojOpcija; ++i) {
-                    int id = getResources().getIdentifier(stabla.get(i).getKrosnja(), "drawable", getPackageName());
+                    int id = getResources().getIdentifier(stabla.get(i).getKrosnja().split("\\.")[0], "drawable", getPackageName());
+                    Toast.makeText(Anketa.this,Integer.toString(id), Toast.LENGTH_SHORT).show();
                     slika[i].setImageResource(id);
                     gumb[i].setText("Slika " + String.valueOf(i + 1));
                 }
@@ -179,16 +202,16 @@ public class Anketa extends AppCompatActivity {
     {
         switch(n){
             case 0:
-                rez_visina = stabla.get(indeks).getVisina();
+                rez_visina = (String)gumb[indeks].getText();
                 break;
             case 1:
                 rez_plod = stabla.get(indeks).getPlod();
                 break;
             case 2:
-                rez_kora_boja = stabla.get(indeks).getKora_boja();
+                rez_kora_boja = (String)gumb[indeks].getText();
                 break;
             case 3:
-                rez_kora_tekstura = stabla.get(indeks).getKora_tekstura();
+                rez_kora_tekstura = (String)gumb[indeks].getText();
                 break;
             case 4:
                 rez_krošnja = stabla.get(indeks).getKrosnja();
@@ -201,6 +224,61 @@ public class Anketa extends AppCompatActivity {
         iv.setVisibility(View.INVISIBLE);
 
     }
+    private void dodajGumbove(int n)
+    {
+        rg.clearCheck();
+        rg.removeAllViews();
+        gumb = new RadioButton[n];
+        for(int i = 0; i < n; ++i)
+        {
+            gumb[i] = new RadioButton(this);
+            gumb[i].setId(i);
+            rg.addView(gumb[i]);
+        }
+        //po default-u označen prvi gumb
+        rg.check(0);
+    }
+    private void dodajGumboveSlike(int n)
+    {
+        rg.clearCheck();
+        rg.removeAllViews();
+        int slika_id;
+        slika = new ImageView[n];
+        gumb = new RadioButton[n];
+        for(int i = 0; i < n; ++i)
+        {
+            gumb[i] = new RadioButton(this);
+            slika[i] = new ImageView(this);
+
+            gumb[i].setId(i);
+
+            rg.addView(slika[i]);
+            rg.addView(gumb[i]);
+
+            if(brojPitanja == 1)
+                slika_id = getResources().getIdentifier(stabla.get(i).getPlod().split("\\.")[0], "drawable", getPackageName());
+            else
+                slika_id = getResources().getIdentifier(stabla.get(i).getKrosnja().split("\\.")[0], "drawable", getPackageName());
+
+            slika[i].setTooltipText(Integer.toString(slika_id));
+            slika[i].setMaxWidth(300);
+            slika[i].setMaxHeight(300);
+            slika[i].setAdjustViewBounds(true);
 
 
+            //još listener za povećavanje svake od ovih slika
+            slika[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    ImageView imageView = (ImageView) findViewById(R.id.zoom);
+                    imageView.setImageResource(Integer.parseInt((String)view.getTooltipText()));
+                    imageView.setVisibility(View.VISIBLE);
+                }
+            });
+
+        }
+        //po default-u označen prvi gumb
+        rg.check(0);
+    }
 }

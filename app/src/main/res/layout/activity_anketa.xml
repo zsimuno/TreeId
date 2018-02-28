@@ -3,13 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/tekst_vert"
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/lin_anketa"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
     <ImageView
         android:id="@+id/zoom"
         android:layout_width="fill_parent"
