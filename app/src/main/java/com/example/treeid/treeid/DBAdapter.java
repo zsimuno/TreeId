@@ -208,7 +208,7 @@ public class DBAdapter {
     {
         Cursor mCursor =
                 db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
-                        KEY_IME + "=" + ime_stabla, null,
+                        KEY_IME + "=\'" + ime_stabla + "\'", null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
