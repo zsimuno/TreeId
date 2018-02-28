@@ -2,4 +2,9 @@
     <string name="app_name">TreeId</string>
     <string name="pocetna">Odaberite list kojem najviše sliči list vašeg stabla. Nakon što odaberete pritisnite "Dalje".(Kliknite na sliku za uvećanu verziju)</string>
     <string name="button">Dalje</string>
+    <string name="button2">Ispunite ponovno</string>
+    <string name="PrvaRec">Naziv stabla s odabranim karakteristikama je:</string>
+    <string name="DrugaRec">Više informacija o stablu pogledajte na slijedećem linku:</string>
+    <string name="TrecaRec">Mislite da ovo nije stablo koje tražite?</string>
+    <string name="CetvrtaRec">Pokušajte ispuniti upitnik ponovno pritiskom na donji gumb</string>
 </resources>
