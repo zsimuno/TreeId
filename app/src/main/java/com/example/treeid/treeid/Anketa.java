@@ -37,7 +37,7 @@ public class Anketa extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String porodica = intent.getStringExtra("porodica");
+        int porodica = Integer.parseInt(intent.getStringExtra("Porodica"));
 
 
         DBAdapter database = new DBAdapter(this);

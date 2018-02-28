@@ -147,7 +147,7 @@ public class DBAdapter {
     }
 
     //---ubacuje stablo u bazu---
-    public long insertStablo(String ime, String lat_ime, String porodica, String visina, String plod,
+    public long insertStablo(String ime, String lat_ime, int porodica, String visina, String plod,
                              String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues initialValues = new ContentValues();
@@ -219,7 +219,7 @@ public class DBAdapter {
     }
 
     //---vraca stabla u istoj porodici---
-    public ArrayList<Stablo> getStablaFromPorodica(String porodica) throws SQLException
+    public ArrayList<Stablo> getStablaFromPorodica(int porodica) throws SQLException
     {
         ArrayList<Stablo> StablaIzPorodice = new ArrayList<Stablo>();
         Cursor mCursor =
@@ -240,7 +240,7 @@ public class DBAdapter {
     }
 
     //---update-a odredjeno stablo---
-    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String visina, String plod,
+    public boolean updateStablo(long rowId, String ime, String lat_ime, int porodica, String visina, String plod,
                                     String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues args = new ContentValues();
