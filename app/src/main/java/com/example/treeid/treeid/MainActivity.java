@@ -18,6 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     Integer[] imageIDs = {
@@ -41,8 +43,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        DBAdapter db = new DBAdapter(this);
+        db.open();
+
+        Toast.makeText(this,"tekst",
+                Toast.LENGTH_LONG).show();
+        ArrayList<Stablo> c = db.getAllStabla();
+        for (Stablo s: c) {
+            Toast.makeText(this,
+                    "ime: " + s.getIme() + "\n" +
+                            "lat ime: " + s.getLat_ime() + "\n" +
+                            "porodica:  " + s.getPorodica() + "\n" +
+                            "link: " + s.getLink(),
+                    Toast.LENGTH_LONG).show();
+        }
+        db.close();
         // Dodaj radio grupu
-        rg = new RadioGroup(this);
+        /*rg = new RadioGroup(this);
         for (int i = 0; i <= 10; ++i)
         {
             // Jedan radio button i ID mu je broj porodice od lista
@@ -97,6 +114,6 @@ public class MainActivity extends AppCompatActivity {
     public void ZatvoriSliku(View view) {
         ImageView iv = (ImageView) findViewById(R.id.zoom);
         iv.setVisibility(View.INVISIBLE);
-
+*/
     }
 }

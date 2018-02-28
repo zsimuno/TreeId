@@ -2,12 +2,18 @@ package com.example.treeid.treeid;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +26,6 @@ public class DBAdapter {
     static final String KEY_IME     = "ime";
     static final String KEY_LAT_IME = "lat_ime";
     static final String KEY_PORODICA= "porodica";
-    static final String KEY_LIST    = "list";
     static final String KEY_VISINA  = "visina";
     static final String KEY_PLOD    = "plod";
     static final String KEY_KORA_BOJA    = "kora_boja";
@@ -36,7 +41,7 @@ public class DBAdapter {
     static final String DATABASE_CREATE =
             "create table stabla (_id integer primary key autoincrement, "
                     + "ime text not null, lat_ime text not null,"
-                    + "porodica text not null, list text not null,"
+                    + "porodica integer not null, "
                     + "visina text not null, plod text not null,"
                     + "kora_boja text not null, kora_tekstura text not null,"
                     + " krosnja text not null, link text not null);";
@@ -54,9 +59,11 @@ public class DBAdapter {
 
     private static class DatabaseHelper extends SQLiteOpenHelper
     {
+        static Context context2;
         DatabaseHelper(Context context)
         {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            context2 = context;
         }
 
         @Override
@@ -64,7 +71,10 @@ public class DBAdapter {
         {
             try {
                 db.execSQL(DATABASE_CREATE);
+                importCSVtoDB(db);
             } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (IOException e){
                 e.printStackTrace();
             }
         }
@@ -76,6 +86,50 @@ public class DBAdapter {
                     + newVersion );
             db.execSQL("DROP TABLE IF EXISTS stabla");
             onCreate(db);
+        }
+
+        private void importCSVtoDB(SQLiteDatabase db) throws IOException {
+            String mCSVfile = "Stabla_sve.csv";
+            AssetManager manager = context2.getAssets();
+            InputStream inStream = null;
+            try {
+                inStream = manager.open(mCSVfile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
+            String line = "";
+            boolean first_row = true;
+            db.beginTransaction();
+            try {
+                while ((line = buffer.readLine()) != null) {
+                    String[] colums = line.split(";");
+                    if (colums.length != 9) {
+                        Log.d("CSVParser", "Skipping Bad CSV Row");
+                        continue;
+                    }
+                    if(first_row){
+                        first_row = false;
+                        continue;
+                    }
+                    ContentValues cv = new ContentValues();
+                    cv.put(KEY_IME, colums[0].trim());
+                    cv.put(KEY_LAT_IME, colums[1].trim());
+                    cv.put(KEY_PORODICA, colums[2].trim());
+                    cv.put(KEY_VISINA, colums[3].trim());
+                    cv.put(KEY_PLOD, colums[4].trim());
+                    cv.put(KEY_KORA_BOJA, colums[5].trim());
+                    cv.put(KEY_KORA_TEKSTURA, colums[6].trim());
+                    cv.put(KEY_KROSNJA, colums[7].trim());
+                    cv.put(KEY_LINK, colums[8].trim());
+                    db.insert(DATABASE_TABLE, null, cv);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
     }
 
@@ -93,14 +147,13 @@ public class DBAdapter {
     }
 
     //---ubacuje stablo u bazu---
-    public long insertStablo(String ime, String lat_ime, String porodica, String list, String visina, String plod,
+    public long insertStablo(String ime, String lat_ime, String porodica, String visina, String plod,
                              String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_IME, ime);
         initialValues.put(KEY_LAT_IME, lat_ime);
         initialValues.put(KEY_PORODICA, porodica);
-        initialValues.put(KEY_LIST, list);
         initialValues.put(KEY_VISINA, visina);
         initialValues.put(KEY_PLOD, plod);
         initialValues.put(KEY_KORA_BOJA, kora_boja);
@@ -121,7 +174,7 @@ public class DBAdapter {
     public ArrayList<Stablo> getAllStabla()
     {
         ArrayList<Stablo> svaStabla = new ArrayList<Stablo>();
-        Cursor mCursor = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK }, null, null, null, null, null);
+        Cursor mCursor = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK }, null, null, null, null, null);
 
         if(mCursor.moveToFirst())
         {
@@ -129,8 +182,7 @@ public class DBAdapter {
             {
                 svaStabla.add(new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                                          mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                                         mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
-                                         mCursor.getString((10))));
+                                         mCursor.getString(7), mCursor.getString(8), mCursor.getString(9) ));
             } while(mCursor.moveToNext());
         }
 
@@ -141,22 +193,21 @@ public class DBAdapter {
     public Stablo getStablo(long rowId) throws SQLException
     {
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  }, KEY_ROWID + "=" + rowId, null,
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  }, KEY_ROWID + "=" + rowId, null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
         return new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                           mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                          mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
-                          mCursor.getString((10)));
+                          mCursor.getString(7), mCursor.getString(8), mCursor.getString(9));
     }
 
     //---vraca specificno stablo preko imena---
     public Stablo getStablo(String ime_stabla) throws SQLException
     {
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
                         KEY_IME + "=" + ime_stabla, null,
                         null, null, null, null);
         if (mCursor != null) {
@@ -164,8 +215,7 @@ public class DBAdapter {
         }
         return new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                 mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
-                mCursor.getString((10)));
+                mCursor.getString(7), mCursor.getString(8), mCursor.getString(9));
     }
 
     //---vraca stabla u istoj porodici---
@@ -173,7 +223,7 @@ public class DBAdapter {
     {
         ArrayList<Stablo> StablaIzPorodice = new ArrayList<Stablo>();
         Cursor mCursor =
-                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_LIST,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
+                db.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,KEY_IME,KEY_LAT_IME,KEY_PORODICA,KEY_VISINA,KEY_PLOD,KEY_KORA_BOJA,KEY_KORA_TEKSTURA,KEY_KROSNJA,KEY_LINK  },
                         KEY_PORODICA + "=" + porodica, null,
                         null, null, null, null);
         if(mCursor.moveToFirst())
@@ -182,8 +232,7 @@ public class DBAdapter {
             {
                 StablaIzPorodice.add(new Stablo(mCursor.getString(1), mCursor.getString(2), mCursor.getString(3),
                         mCursor.getString(4), mCursor.getString(5), mCursor.getString(6),
-                        mCursor.getString(7), mCursor.getString(8), mCursor.getString(9),
-                        mCursor.getString((10))));
+                        mCursor.getString(7), mCursor.getString(8), mCursor.getString(9)));
             } while(mCursor.moveToNext());
         }
 
@@ -191,14 +240,13 @@ public class DBAdapter {
     }
 
     //---update-a odredjeno stablo---
-    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String list, String visina, String plod,
+    public boolean updateStablo(long rowId, String ime, String lat_ime, String porodica, String visina, String plod,
                                     String kora_boja, String kora_tekstura, String krosnja, String link)
     {
         ContentValues args = new ContentValues();
         args.put(KEY_IME, ime);
         args.put(KEY_LAT_IME, lat_ime);
         args.put(KEY_PORODICA, porodica);
-        args.put(KEY_LIST, list);
         args.put(KEY_VISINA, visina);
         args.put(KEY_PLOD, plod);
         args.put(KEY_KORA_BOJA, kora_boja);

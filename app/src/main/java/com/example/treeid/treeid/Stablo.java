@@ -8,7 +8,6 @@ public class Stablo {
     String ime;
     String lat_ime;
     String porodica;
-    String list;
     String visina;
     String plod;
     String kora_boja;
@@ -17,11 +16,10 @@ public class Stablo {
     String link;
 
 
-    public Stablo(String _ime, String _lat_ime, String _porodica, String _list, String _visina, String _plod, String _kora_boja, String _kora_tekstura, String _krosnja, String _link){
+    public Stablo(String _ime, String _lat_ime, String _porodica, String _visina, String _plod, String _kora_boja, String _kora_tekstura, String _krosnja, String _link){
         ime     = _ime;
         lat_ime = _lat_ime;
         porodica= _porodica;
-        list    = _list;
         visina  = _visina;
         plod    = _plod;
         kora_boja    = _kora_boja;
@@ -42,11 +40,6 @@ public class Stablo {
     public String getPorodica() {
         return porodica;
     }
-
-    public String getList() {
-        return list;
-    }
-
 
     public String getKora_boja() {
         return kora_boja;
