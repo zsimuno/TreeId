@@ -15,13 +15,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/pocetna"
-            android:textColor="#000000"/>
+            style="@style/text_style" />
+
+
 
         <Button
-            android:layout_width="wrap_content"
+            android:background="@drawable/btn_background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button"
-            android:onClick="Posalji"/>
+            android:onClick="Posalji"
+            style="@style/btn_style"
+
+            />
 
         <!--ScrollView u kojem će biti ponuđeni listovi za odabir-->
         <ScrollView

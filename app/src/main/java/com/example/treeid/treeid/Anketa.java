@@ -2,8 +2,8 @@ package com.example.treeid.treeid;
 
 import android.app.ActionBar;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 public class Anketa extends BaseActivity {
 
     String rez_visina, rez_plod, rez_krošnja, rez_kora_boja, rez_kora_tekstura;
-    boolean oznacen = false;
     ArrayList<Stablo> stabla = new ArrayList<Stablo>();
     TextView pitanje;
     RadioGroup rg;
@@ -53,7 +51,7 @@ public class Anketa extends BaseActivity {
         brojStabala = stabla.size();
 
         database.close();
-        LinearLayout layout1 = (LinearLayout) findViewById(R.id.lin_anketa);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.lin_anketa);
 
 
         ActionBar.LayoutParams lparams = new ActionBar.LayoutParams( //tako da širinom zauzima cijeli ekran
@@ -61,16 +59,20 @@ public class Anketa extends BaseActivity {
 
         pitanje = new TextView(this);
         pitanje.setLayoutParams(lparams);
-        layout1.addView(pitanje);
+        pitanje = (TextView)getLayoutInflater().inflate(R.layout.text_template_layout, null);
+        layout.addView(pitanje);
 
 
         rg = new RadioGroup(this);
 
-        layout1.addView(rg);
+        layout.addView(rg);
         napraviPitanje();
         btn = new Button(this);
-        btn.setText("Dalje");
-        layout1.addView(btn);
+
+        btn = (Button)getLayoutInflater().inflate(R.layout.btn_template_layout,null);
+        btn.setText(R.string.btnDalje);
+        layout.addView(btn);
+
         btn.setOnClickListener(idiDalje);
     }
 
@@ -82,19 +84,18 @@ public class Anketa extends BaseActivity {
                 if(gumb[i].isChecked() && brojPitanja == 4)
                 {
                     napraviRez(brojPitanja);
-                    String test = rez_visina + " " + rez_plod + " " + rez_krošnja + " " + rez_kora_boja + " " + rez_kora_tekstura;
-                    Toast.makeText(Anketa.this, test ,Toast.LENGTH_LONG).show();
+
                     Intent in = new Intent(Anketa.this, Rezultat.class);
 
                     int[] provjera = new int[brojStabala];
                     for(int j = 0; j < brojStabala; ++j)
                     {
                         // Provjerava za svako stablo koliko se rezultata podudara
-                        if(rez_visina   == stabla.get(i).getVisina())                    ++provjera[i];
-                        if(rez_plod     == stabla.get(i).getPlod())                      ++provjera[i];
-                        if(rez_krošnja  == stabla.get(i).getKrosnja())                   ++provjera[i];
-                        if(stabla.get(i).getKora_boja().contains(rez_kora_boja))         ++provjera[i];
-                        if(stabla.get(i).getKora_tekstura().contains(rez_kora_tekstura)) ++provjera[i];
+                        if(rez_visina.equals(stabla.get(i).getVisina()))                  ++provjera[i];
+                        if(rez_plod.equals(stabla.get(i).getPlod()))                      ++provjera[i];
+                        if(rez_krošnja.equals(stabla.get(i).getKrosnja()))                ++provjera[i];
+                        if(stabla.get(i).getKora_boja().contains(rez_kora_boja))          ++provjera[i];
+                        if(stabla.get(i).getKora_tekstura().contains(rez_kora_tekstura))  ++provjera[i];
 
                     }
 
@@ -116,7 +117,7 @@ public class Anketa extends BaseActivity {
                     napraviRez(brojPitanja);
                     if(brojPitanja == 3)
                     {
-                        btn.setText("Pogledaj rezultat");
+                        btn.setText(R.string.btnRez);
                     }
                     brojPitanja++;
                     napraviPitanje();
@@ -127,12 +128,11 @@ public class Anketa extends BaseActivity {
     };
     private void napraviPitanje() {
         ArrayList<String> lista = new ArrayList<String>();
-        Toast.makeText(Anketa.this, Integer.toString(brojPitanja) ,Toast.LENGTH_LONG).show();
+        String tekst;
 
         switch(brojPitanja){
             case 0:
-
-                pitanje.setText("Izaberite približnu visinu stabla:");
+                pitanje.setText(R.string.pitanje1);
                 for(int i = 0; i < brojStabala; ++i)
                     if(!lista.contains(stabla.get(i).getVisina()))
                         lista.add(stabla.get(i).getVisina());
@@ -146,20 +146,21 @@ public class Anketa extends BaseActivity {
 
                 break;
             case 1:
+
                 brojOpcija = brojStabala;
                 dodajGumboveSlike(brojOpcija);
-                pitanje.setText("Izaberite sliku ploda:");
+                pitanje.setText(R.string.pitanje2);
                 for(int i = 0; i < brojOpcija; ++i){
                     int id = getResources().getIdentifier(stabla.get(i).getPlod().split("\\.")[0],"drawable",getPackageName());//ovo radi normalno
                     slika[i].setImageResource(id);
-
-                    gumb[i].setText("Slika " + String.valueOf(i + 1));
+                    tekst = "Slika " + String.valueOf(i + 1);
+                    gumb[i].setText(tekst);
                 }
 
                 break;
             case 2:
                 lista.clear();
-                pitanje.setText("Kakvu boju kora ima ?");
+                pitanje.setText(R.string.pitanje3);
                 //ako je sadržana boja mladog stabla i starog, tada su one odvojene zarezom
                 for(int i = 0; i < brojStabala; ++i){
                     if(stabla.get(i).getKora_boja().contains(","))
@@ -187,7 +188,7 @@ public class Anketa extends BaseActivity {
                 break;
             case 3:
                 lista.clear();
-                pitanje.setText("Kakvu teksturu kora ima ?");
+                pitanje.setText(R.string.pitanje4);
 
                 for(int i = 0; i < brojStabala; ++i){
                     if(stabla.get(i).getKora_tekstura().contains(","))
@@ -219,12 +220,12 @@ public class Anketa extends BaseActivity {
             case 4:
                 brojOpcija = brojStabala;
                 dodajGumboveSlike(brojStabala);
-                pitanje.setText("Izaberite sliku krošnje: ");
+                pitanje.setText(R.string.pitanje5);
                 for(int i = 0; i < brojOpcija; ++i) {
                     int id = getResources().getIdentifier(stabla.get(i).getKrosnja().split("\\.")[0], "drawable", getPackageName());
-
+                    tekst = "Slika " + String.valueOf(i + 1);
                     slika[i].setImageResource(id);
-                    gumb[i].setText("Slika " + String.valueOf(i + 1));
+                    gumb[i].setText(tekst);
                 }
                 break;
         }
@@ -281,7 +282,9 @@ public class Anketa extends BaseActivity {
         {
             gumb[i] = new RadioButton(this);
             slika[i] = new ImageView(this);
-
+            slika[i].setPadding(30,40,0,0);
+            gumb[i].setPadding(30,0,0,40);
+            gumb[i].setGravity(Gravity.TOP);
             gumb[i].setId(i);
 
             rg.addView(slika[i]);

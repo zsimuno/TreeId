@@ -3,6 +3,7 @@ package com.example.treeid.treeid;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,9 +44,10 @@ public class MainActivity extends BaseActivity {
             // Jedan radio button i ID mu je broj porodice od lista
             RadioButton rb = new RadioButton(this);
             rb.setId(i+1);
-            rb.setText(Integer.toString(i+1));
+            rb.setText("Slika " + Integer.toString(i+1));
             rb.setChecked((i == 0) ? true : false);
-
+            rb.setPadding(30,0,0,40);
+            rb.setGravity(Gravity.TOP);
             // Slika lista
             ImageView iv = new ImageView(this);
             iv.setTooltipText(Integer.toString(i));
@@ -53,6 +55,9 @@ public class MainActivity extends BaseActivity {
             iv.setAdjustViewBounds(true);
             iv.setMaxWidth(300);
             iv.setMaxHeight(300);
+            iv.setPadding(30,40,0,0);
+
+
 
             // Listener koji uvećava sliku (točnije stavlja da je R.id.zoom visible i stavlja sliku a R.id.zoom je preko cijelog ekrana)
             iv.setOnClickListener(new View.OnClickListener() {
@@ -65,15 +70,16 @@ public class MainActivity extends BaseActivity {
             });
 
             // Line separator
-            View v = new View(this);
+            /*View v = new View(this);
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDisplayMetrics().density * 1);
             v.setLayoutParams(lp);
-            v.setBackgroundColor(Color.BLACK);
+            v.setBackgroundColor(Color.BLACK);*/
 
             // Dodaje sve gore u RadioGroup
-            rg.addView(rb);
             rg.addView(iv);
-            rg.addView(v);
+            rg.addView(rb);
+
+            //rg.addView(v);
         }
 
         // Stavljamo RadioGroup u ScrollView tako se lista listova može scrollati

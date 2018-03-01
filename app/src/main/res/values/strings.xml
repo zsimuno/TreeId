@@ -6,7 +6,7 @@
     <string name="PrvaRec">Naziv stabla s odabranim karakteristikama je:</string>
     <string name="DrugaRec">Više informacija o stablu pogledajte na slijedećem linku:</string>
     <string name="TrecaRec">Mislite da ovo nije stablo koje tražite?</string>
-    <string name="CetvrtaRec">Pokušajte ispuniti upitnik ponovno pritiskom na donji gumb</string>
+    <string name="CetvrtaRec">Pokušajte ispuniti upitnik ponovno pritiskom na donji gumb.</string>
     <string name="about">O aplikaciji</string>
     <string name="closeDialog">OK</string>
     <string name="bVerzija">Verzija:\u0020</string>
@@ -15,4 +15,11 @@
     <string name="autori">M.M., Z.Š., P.V., S.Z.\n</string>
     <string name="bEmail">Email:\u0020</string>
     <string name="emailAndInfo">treeid_info@gmail.com\nAko imate bilo kakvih pitanja ili prijedloga za aplikaciju slobodno nas kontaktirajete.</string>
+    <string name="btnDalje">Dalje</string>
+    <string name="btnRez">Pogledaj rezultat</string>
+    <string name="pitanje1">Izaberite približnu visinu stabla:</string>
+    <string name="pitanje2">Izaberite sliku ploda:</string>
+    <string name="pitanje3">Kakvu boju kora ima ?</string>
+    <string name="pitanje4">Kakvu teksturu kora ima ?</string>
+    <string name="pitanje5">Izaberite sliku krošnje:</string>
 </resources>

@@ -19,25 +19,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/PrvaRec"
-            android:textColor="#000000"/>
+            style="@style/text_style"
+            />
 
         <TextView
             android:id="@+id/naziv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000000"/>
+            style="@style/text_style2"
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/DrugaRec"
-            android:textColor="#000000"/>
+            style="@style/text_style" />
+
+
 
         <TextView
             android:id="@+id/link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000000"/>
+            style="@style/text_style"
+            />
 
         <ImageView
             android:layout_width="match_parent"
@@ -48,19 +53,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/TrecaRec"
-            android:textColor="#000000"/>
+            style="@style/text_style"
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/CetvrtaRec"
-            android:textColor="#000000"/>
+            style="@style/text_style"
+            />
 
         <Button
-            android:layout_width="wrap_content"
+            android:background="@drawable/btn_background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button2"
-            android:onClick="Ponovno"/>
+            android:onClick="Ponovno"
+            style="@style/btn_style"
+
+            />
 
 
     </LinearLayout>
