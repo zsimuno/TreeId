@@ -53,7 +53,7 @@ public class Anketa extends BaseActivity {
         brojStabala = stabla.size();
 
         database.close();
-        LinearLayout layout1 = findViewById(R.id.lin_anketa);
+        LinearLayout layout1 = (LinearLayout) findViewById(R.id.lin_anketa);
 
 
         ActionBar.LayoutParams lparams = new ActionBar.LayoutParams( //tako da širinom zauzima cijeli ekran
@@ -79,13 +79,39 @@ public class Anketa extends BaseActivity {
         public void onClick(View view) {
             for(int i = 0; i < brojOpcija; ++i)
             {
-                if(gumb[i].isChecked() && brojPitanja == 4){
+                if(gumb[i].isChecked() && brojPitanja == 4)
+                {
                     napraviRez(brojPitanja);
                     String test = rez_visina + " " + rez_plod + " " + rez_krošnja + " " + rez_kora_boja + " " + rez_kora_tekstura;
                     Toast.makeText(Anketa.this, test ,Toast.LENGTH_LONG).show();
+                    Intent in = new Intent(Anketa.this, Rezultat.class);
+
+                    int[] provjera = new int[brojStabala];
+                    for(int j = 0; j < brojStabala; ++j)
+                    {
+                        // Provjerava za svako stablo koliko se rezultata podudara
+                        if(rez_visina   == stabla.get(i).getVisina())                    ++provjera[i];
+                        if(rez_plod     == stabla.get(i).getPlod())                      ++provjera[i];
+                        if(rez_krošnja  == stabla.get(i).getKrosnja())                   ++provjera[i];
+                        if(stabla.get(i).getKora_boja().contains(rez_kora_boja))         ++provjera[i];
+                        if(stabla.get(i).getKora_tekstura().contains(rez_kora_tekstura)) ++provjera[i];
+
+                    }
+
+                    // Traži indeks od stabla koje ima najviše podudaranja
+                    int najveci = 0;
+                    for(int j = 0; j < brojStabala; ++j)
+                    {
+                        if(provjera[j] > provjera[najveci]) najveci = j;
+                    }
+
+                    in.putExtra("Ime", stabla.get(najveci).getIme());
+//                    Toast.makeText(Anketa.this, test ,Toast.LENGTH_LONG).show();
+                    startActivity(in);
 
                 }
-                else if(gumb[i].isChecked()) {
+                else if(gumb[i].isChecked())
+                {
                     indeks = i;
                     napraviRez(brojPitanja);
                     if(brojPitanja == 3)
@@ -101,6 +127,7 @@ public class Anketa extends BaseActivity {
     };
     private void napraviPitanje() {
         ArrayList<String> lista = new ArrayList<String>();
+        Toast.makeText(Anketa.this, Integer.toString(brojPitanja) ,Toast.LENGTH_LONG).show();
 
         switch(brojPitanja){
             case 0:
@@ -195,7 +222,7 @@ public class Anketa extends BaseActivity {
                 pitanje.setText("Izaberite sliku krošnje: ");
                 for(int i = 0; i < brojOpcija; ++i) {
                     int id = getResources().getIdentifier(stabla.get(i).getKrosnja().split("\\.")[0], "drawable", getPackageName());
-                    Toast.makeText(Anketa.this,Integer.toString(id), Toast.LENGTH_SHORT).show();
+
                     slika[i].setImageResource(id);
                     gumb[i].setText("Slika " + String.valueOf(i + 1));
                 }
