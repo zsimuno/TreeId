@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class Anketa extends BaseActivity {
     ImageView[] slika;
     RadioButton[] gumb;
     Button btn;
+    int porodica;
     int indeks;
     int brojStabala, brojOpcija;
     int brojPitanja = 0; //redni broj pitanja
@@ -41,9 +43,8 @@ public class Anketa extends BaseActivity {
 
         Intent intent = getIntent();
 
-        int porodica = Integer.parseInt(intent.getStringExtra("Porodica"));
-
-
+        porodica = Integer.parseInt(intent.getStringExtra("Porodica"));
+        
         DBAdapter database = new DBAdapter(this);
         database.open();
         //this.deleteDatabase("database");
@@ -74,6 +75,37 @@ public class Anketa extends BaseActivity {
         layout.addView(btn);
 
         btn.setOnClickListener(idiDalje);
+
+        //Toast.makeText(Anketa.this,Integer.toString(brojPitanja),Toast.LENGTH_SHORT).show();
+    }
+    //zbog okretanja ekrana
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putString("rez_visina", rez_visina);
+        outState.putString("rez_plod", rez_plod);
+        outState.putString("rez_krošnja", rez_krošnja);
+        outState.putString("rez_kora_boja", rez_kora_boja);
+        outState.putString("rez_kora_tekstura", rez_kora_tekstura);
+        outState.putInt("brojPitanja",brojPitanja);
+        outState.putInt("porodica",porodica);
+        outState.putInt("indeks",indeks);
+
+        super.onSaveInstanceState(outState);
+        //Toast.makeText(Anketa.this,Integer.toString(brojPitanja) + " save",Toast.LENGTH_SHORT).show();
+
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        rez_visina = savedInstanceState.getString("rez_visina");
+        rez_plod = savedInstanceState.getString("rez_plod");
+        rez_krošnja = savedInstanceState.getString("rez_krošnja");
+        rez_kora_boja = savedInstanceState.getString("rez_kora_boja");
+        rez_kora_tekstura = savedInstanceState.getString("rez_kora_tekstura");
+        brojPitanja = savedInstanceState.getInt("brojPitanja");
+        indeks = savedInstanceState.getInt("indeks");
+
+        napraviPitanje();
     }
 
     private View.OnClickListener idiDalje = new View.OnClickListener() {
