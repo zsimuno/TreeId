@@ -44,7 +44,7 @@ public class Anketa extends BaseActivity {
         Intent intent = getIntent();
 
         porodica = Integer.parseInt(intent.getStringExtra("Porodica"));
-        
+
         DBAdapter database = new DBAdapter(this);
         database.open();
         //this.deleteDatabase("database");
