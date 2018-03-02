@@ -2,6 +2,7 @@ package com.example.treeid.treeid;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -69,17 +70,17 @@ public class MainActivity extends BaseActivity {
                 }
             });
 
+
             // Line separator
-            /*View v = new View(this);
+            View v = new View(this);
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDisplayMetrics().density * 1);
             v.setLayoutParams(lp);
-            v.setBackgroundColor(Color.BLACK);*/
+            v.setBackgroundColor(Color.parseColor("#006400"));
 
             // Dodaje sve gore u RadioGroup
             rg.addView(iv);
             rg.addView(rb);
-
-            //rg.addView(v);
+            rg.addView(v);
         }
 
         // Stavljamo RadioGroup u ScrollView tako se lista listova može scrollati

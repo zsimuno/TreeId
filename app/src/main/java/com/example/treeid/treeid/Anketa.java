@@ -2,9 +2,11 @@ package com.example.treeid.treeid;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +41,8 @@ public class Anketa extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher_round);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+
 
 
         Intent intent = getIntent();
@@ -199,14 +203,14 @@ public class Anketa extends BaseActivity {
                     {
                         //ako već ne sadrži tu boju ubacujemo u listu
                         if(!lista.contains(stabla.get(i).getKora_boja().split(",")[0]))
-                            lista.add(stabla.get(i).getKora_boja().split(",")[0]);
+                            lista.add(stabla.get(i).getKora_boja().split(",")[0].trim());
                         if(!lista.contains(stabla.get(i).getKora_boja().split(",")[1]))
-                            lista.add(stabla.get(i).getKora_boja().split(",")[1]);
+                            lista.add(stabla.get(i).getKora_boja().split(",")[1].trim());
                     }
                     else
                     {
                         if(!lista.contains(stabla.get(i).getKora_boja()))
-                            lista.add(stabla.get(i).getKora_boja());
+                            lista.add(stabla.get(i).getKora_boja().trim());
                     }
 
                 }
@@ -227,14 +231,14 @@ public class Anketa extends BaseActivity {
                     {
                         //ako već ne sadrži tu boju ubacujemo u listu
                         if(!lista.contains(stabla.get(i).getKora_tekstura().split(",")[0]))
-                            lista.add(stabla.get(i).getKora_tekstura().split(",")[0]);
+                            lista.add(stabla.get(i).getKora_tekstura().split(",")[0].trim());
                         if(!lista.contains(stabla.get(i).getKora_tekstura().split(",")[1]))
-                            lista.add(stabla.get(i).getKora_tekstura().split(",")[1]);
+                            lista.add(stabla.get(i).getKora_tekstura().split(",")[1].trim());
                     }
                     else
                     {
                         if(!lista.contains(stabla.get(i).getKora_tekstura()))
-                            lista.add(stabla.get(i).getKora_tekstura());
+                            lista.add(stabla.get(i).getKora_tekstura().trim());
                     }
 
 
@@ -299,6 +303,13 @@ public class Anketa extends BaseActivity {
             gumb[i] = new RadioButton(this);
             gumb[i].setId(i);
             rg.addView(gumb[i]);
+
+            View lineSeparator = new View(this);
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDisplayMetrics().density * 1);
+            lineSeparator.setLayoutParams(lp);
+            lineSeparator.setBackgroundColor(Color.parseColor("#006400"));
+
+            rg.addView(lineSeparator);
         }
         //po default-u označen prvi gumb
         rg.check(0);
@@ -321,6 +332,13 @@ public class Anketa extends BaseActivity {
 
             rg.addView(slika[i]);
             rg.addView(gumb[i]);
+
+            View lineSeparator = new View(this);
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDisplayMetrics().density * 1);
+            lineSeparator.setLayoutParams(lp);
+            lineSeparator.setBackgroundColor(Color.parseColor("#006400"));
+
+            rg.addView(lineSeparator);
 
             if(brojPitanja == 1)
                 slika_id = getResources().getIdentifier(stabla.get(i).getPlod().split("\\.")[0], "drawable", getPackageName());
